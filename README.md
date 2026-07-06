@@ -3,7 +3,8 @@
 A full-stack fitness challenge application that gamifies physical activity. It ingests a diverse
 set of sports, **normalizes each into a unified "Points" score**, ranks everyone on a global
 leaderboard (with weekly rank trends), and gives every athlete a personal dashboard to visualize
-their habits over time.
+their habits over time — including an activity-over-time chart, a sport breakdown, a GitHub-style
+**activity heatmap**, and **streak** tracking.
 
 | Leaderboard | Dashboard | Log data |
 |---|---|---|
@@ -144,6 +145,13 @@ The assignment intentionally leaves some areas open. Here is how each was resolv
 
 6. **Correct HTTP semantics.** Duplicate name → `409`, unknown user on ingest → `404`, invalid body
    → `400`, all as RFC-9110 `ProblemDetails` via a global exception handler.
+
+7. **No future-dated activities.** Ingestion rejects timestamps in the future (with a small
+   clock-skew tolerance), since a fitness log shouldn't contain activities that haven't happened yet.
+
+8. **Validation lives on the server; the client mirrors it for UX.** FluentValidation is the single
+   source of truth (`400`); the Angular forms additionally validate inline (disabled submit, format
+   hints) so users get instant feedback without a round-trip.
 
 ---
 

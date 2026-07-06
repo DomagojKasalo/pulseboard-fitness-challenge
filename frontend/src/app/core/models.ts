@@ -54,6 +54,8 @@ export interface Dashboard {
   totalPoints: number;
   rank: number | null;
   activityCount: number;
+  currentStreak: number;
+  longestStreak: number;
   history: ActivityHistoryItem[];
   volumeOverTime: DailyVolumePoint[];
   sportBreakdown: SportBreakdownSlice[];

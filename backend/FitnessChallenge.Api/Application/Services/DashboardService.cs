@@ -1,4 +1,5 @@
 using FitnessChallenge.Api.Application.Dtos;
+using FitnessChallenge.Api.Domain;
 using FitnessChallenge.Api.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,11 +14,13 @@ public sealed class DashboardService : IDashboardService
 {
     private readonly FitnessDbContext _db;
     private readonly ILeaderboardService _leaderboard;
+    private readonly TimeProvider _clock;
 
-    public DashboardService(FitnessDbContext db, ILeaderboardService leaderboard)
+    public DashboardService(FitnessDbContext db, ILeaderboardService leaderboard, TimeProvider clock)
     {
         _db = db;
         _leaderboard = leaderboard;
+        _clock = clock;
     }
 
     public async Task<DashboardDto> GetDashboardAsync(Guid userId, CancellationToken ct)
@@ -50,9 +53,14 @@ public sealed class DashboardService : IDashboardService
         var leaderboard = await _leaderboard.GetLeaderboardAsync(ct);
         var rank = leaderboard.FirstOrDefault(e => e.UserId == userId)?.Rank;
 
+        var today = DateOnly.FromDateTime(_clock.GetUtcNow().UtcDateTime);
+        var activeDays = activities.Select(a => DateOnly.FromDateTime(a.OccurredAt));
+        var (currentStreak, longestStreak) = StreakCalculator.Compute(activeDays, today);
+
         return new DashboardDto(
             user.Id, user.FirstName, user.LastName,
             activities.Sum(a => a.Points), rank, activities.Count,
+            currentStreak, longestStreak,
             history, volumeOverTime, sportBreakdown);
     }
 }

@@ -20,6 +20,7 @@ import {
 import { ApiService } from '../../core/api.service';
 import { Dashboard, UserSummary } from '../../core/models';
 import { sportMeta } from '../../core/sports';
+import { ActivityHeatmapComponent } from './activity-heatmap';
 
 interface AreaChart {
   series: ApexAxisChartSeries;
@@ -48,7 +49,7 @@ interface DonutChart {
 
 @Component({
   selector: 'app-dashboard',
-  imports: [RouterLink, NgApexchartsModule, DecimalPipe, DatePipe, FormsModule],
+  imports: [RouterLink, NgApexchartsModule, DecimalPipe, DatePipe, FormsModule, ActivityHeatmapComponent],
   templateUrl: './dashboard.html',
 })
 export class DashboardComponent {

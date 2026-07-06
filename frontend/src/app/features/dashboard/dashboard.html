@@ -74,6 +74,18 @@
         </div>
       </div>
 
+      <!-- Streak + heatmap -->
+      <div class="card p-5">
+        <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
+          <h2 class="font-semibold text-white">Activity streak</h2>
+          <div class="flex items-center gap-4 text-sm">
+            <span>🔥 Current: <b class="text-brand">{{ d.currentStreak }}</b> {{ d.currentStreak === 1 ? 'day' : 'days' }}</span>
+            <span class="text-slate-400">Longest: <b class="text-white">{{ d.longestStreak }}</b></span>
+          </div>
+        </div>
+        <app-activity-heatmap [data]="d.volumeOverTime" />
+      </div>
+
       <!-- History -->
       <div class="card overflow-hidden">
         <h2 class="border-b border-white/5 px-5 py-4 font-semibold text-white">Activity history</h2>

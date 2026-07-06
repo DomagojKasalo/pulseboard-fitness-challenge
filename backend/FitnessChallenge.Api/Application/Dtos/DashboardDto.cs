@@ -7,6 +7,8 @@ public sealed record DashboardDto(
     int TotalPoints,
     int? Rank,
     int ActivityCount,
+    int CurrentStreak,
+    int LongestStreak,
     IReadOnlyList<ActivityHistoryItem> History,
     IReadOnlyList<DailyVolumePoint> VolumeOverTime,
     IReadOnlyList<SportBreakdownSlice> SportBreakdown);

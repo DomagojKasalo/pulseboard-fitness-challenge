@@ -1,0 +1,91 @@
+<section class="space-y-8">
+  <div class="flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <h1 class="text-3xl font-extrabold tracking-tight text-white">Global Leaderboard</h1>
+      <p class="mt-1 text-slate-400">Every sport, normalized to one fair score. Trend compares against last week.</p>
+    </div>
+    @if (!loading() && entries().length) {
+      <span class="rounded-full border border-white/10 bg-surface-900/60 px-4 py-1.5 text-sm text-slate-300">
+        {{ entries().length }} athletes competing
+      </span>
+    }
+  </div>
+
+  @if (loading()) {
+    <div class="grid gap-4 sm:grid-cols-3">
+      @for (i of [1, 2, 3]; track i) {
+        <div class="card h-40 animate-pulse"></div>
+      }
+    </div>
+  } @else if (error()) {
+    <div class="card border-rose-500/20 p-8 text-center">
+      <p class="text-rose-300">{{ error() }}</p>
+      <button class="btn-ghost mt-4" (click)="load()">Try again</button>
+    </div>
+  } @else if (!entries().length) {
+    <div class="card p-12 text-center">
+      <p class="text-slate-400">No athletes yet. Be the first to <a routerLink="/log" class="text-brand underline">log an activity</a>.</p>
+    </div>
+  } @else {
+    <!-- Podium -->
+    <div class="grid items-end gap-4 sm:grid-cols-3">
+      @for (entry of podium(); track entry.userId) {
+        <a [routerLink]="['/dashboard', entry.userId]"
+           class="card group relative flex flex-col items-center p-6 transition hover:border-brand/40 hover:shadow-glow"
+           [class]="entry.rank === 1 ? 'sm:-translate-y-3 border-brand/30' : ''">
+          <span class="absolute right-4 top-4 text-2xl">
+            {{ entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : '🥉' }}
+          </span>
+          <div class="grid h-16 w-16 place-items-center rounded-2xl text-xl font-bold"
+               [class]="entry.rank === 1 ? 'bg-brand text-surface-950' : 'bg-surface-700 text-slate-200'">
+            {{ initials(entry) }}
+          </div>
+          <p class="mt-3 font-semibold text-white">{{ entry.firstName }} {{ entry.lastName }}</p>
+          <p class="mt-1 text-2xl font-extrabold tabular-nums text-brand">{{ entry.totalPoints | number }}</p>
+          <p class="text-xs uppercase tracking-wide text-slate-500">points</p>
+          <span class="mt-2 flex items-center gap-1 text-xs font-semibold" [class]="trendClass(entry.trend)">
+            {{ trendIcon(entry.trend) }} {{ trendLabel(entry) }}
+          </span>
+        </a>
+      }
+    </div>
+
+    <!-- Ranks 4+ -->
+    @if (rest().length) {
+      <div class="card overflow-hidden">
+        <table class="w-full text-left">
+          <thead class="border-b border-white/5 text-xs uppercase tracking-wide text-slate-500">
+            <tr>
+              <th class="px-5 py-3 font-medium">Rank</th>
+              <th class="px-5 py-3 font-medium">Athlete</th>
+              <th class="px-5 py-3 text-center font-medium">Trend</th>
+              <th class="px-5 py-3 text-right font-medium">Points</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (entry of rest(); track entry.userId) {
+              <tr class="group cursor-pointer border-b border-white/5 transition last:border-0 hover:bg-white/5"
+                  [routerLink]="['/dashboard', entry.userId]">
+                <td class="px-5 py-3.5 font-bold tabular-nums text-slate-400">{{ entry.rank }}</td>
+                <td class="px-5 py-3.5">
+                  <div class="flex items-center gap-3">
+                    <span class="grid h-9 w-9 place-items-center rounded-lg bg-surface-700 text-sm font-semibold text-slate-200">
+                      {{ initials(entry) }}
+                    </span>
+                    <span class="font-medium text-white group-hover:text-brand">{{ entry.firstName }} {{ entry.lastName }}</span>
+                  </div>
+                </td>
+                <td class="px-5 py-3.5 text-center">
+                  <span class="inline-flex items-center gap-1 text-sm font-semibold" [class]="trendClass(entry.trend)">
+                    {{ trendIcon(entry.trend) }} {{ trendLabel(entry) }}
+                  </span>
+                </td>
+                <td class="px-5 py-3.5 text-right text-lg font-bold tabular-nums text-white">{{ entry.totalPoints | number }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  }
+</section>

@@ -1,0 +1,113 @@
+<section class="space-y-8">
+  <div class="flex flex-wrap items-center justify-between gap-4">
+    <div>
+      <h1 class="text-3xl font-extrabold tracking-tight text-white">Personal Dashboard</h1>
+      <p class="mt-1 text-slate-400">Activity trends and sport breakdown for a single athlete.</p>
+    </div>
+
+    @if (users().length) {
+      <div>
+        <label class="label" for="athlete">Athlete</label>
+        <select id="athlete" class="input min-w-[16rem]" [value]="userId() ?? ''"
+                (change)="onUserChange($any($event.target).value)">
+          @for (u of users(); track u.id) {
+            <option [value]="u.id">{{ u.firstName }} {{ u.lastName }}</option>
+          }
+        </select>
+      </div>
+    }
+  </div>
+
+  @if (error()) {
+    <div class="card border-rose-500/20 p-8 text-center text-rose-300">{{ error() }}</div>
+  } @else if (loading() && !dashboard()) {
+    <div class="card h-64 animate-pulse"></div>
+  } @else if (dashboard(); as d) {
+    <!-- Stat tiles -->
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div class="card p-5">
+        <p class="text-xs uppercase tracking-wide text-slate-500">Total points</p>
+        <p class="mt-2 text-3xl font-extrabold tabular-nums text-brand">{{ d.totalPoints | number }}</p>
+      </div>
+      <div class="card p-5">
+        <p class="text-xs uppercase tracking-wide text-slate-500">Global rank</p>
+        <p class="mt-2 text-3xl font-extrabold tabular-nums text-white">{{ d.rank ? '#' + d.rank : '—' }}</p>
+      </div>
+      <div class="card p-5">
+        <p class="text-xs uppercase tracking-wide text-slate-500">Activities</p>
+        <p class="mt-2 text-3xl font-extrabold tabular-nums text-white">{{ d.activityCount }}</p>
+      </div>
+      <div class="card p-5">
+        <p class="text-xs uppercase tracking-wide text-slate-500">Top sport</p>
+        <p class="mt-2 flex items-center gap-2 text-2xl font-bold text-white">
+          @if (favoriteSport(); as fav) {
+            <span>{{ fav.icon }}</span> <span class="text-xl">{{ fav.label }}</span>
+          } @else {
+            <span class="text-slate-500">—</span>
+          }
+        </p>
+      </div>
+    </div>
+
+    @if (d.activityCount === 0) {
+      <div class="card p-12 text-center">
+        <p class="text-slate-400">No activities logged yet for {{ d.firstName }}.
+          <a routerLink="/log" class="text-brand underline">Log the first one →</a></p>
+      </div>
+    } @else {
+      <!-- Charts -->
+      <div class="grid gap-4 lg:grid-cols-5">
+        <div class="card p-5 lg:col-span-3">
+          <h2 class="mb-2 font-semibold text-white">Activity volume over time</h2>
+          <apx-chart
+            [series]="areaChart().series" [chart]="areaChart().chart" [xaxis]="areaChart().xaxis"
+            [yaxis]="areaChart().yaxis" [fill]="areaChart().fill" [stroke]="areaChart().stroke"
+            [dataLabels]="areaChart().dataLabels" [grid]="areaChart().grid" [tooltip]="areaChart().tooltip"
+            [colors]="areaChart().colors" />
+        </div>
+        <div class="card p-5 lg:col-span-2">
+          <h2 class="mb-2 font-semibold text-white">Preferred sports</h2>
+          <apx-chart
+            [series]="donutChart().series" [chart]="donutChart().chart" [labels]="donutChart().labels"
+            [colors]="donutChart().colors" [legend]="donutChart().legend" [dataLabels]="donutChart().dataLabels"
+            [stroke]="donutChart().stroke" [plotOptions]="donutChart().plotOptions" [tooltip]="donutChart().tooltip" />
+        </div>
+      </div>
+
+      <!-- History -->
+      <div class="card overflow-hidden">
+        <h2 class="border-b border-white/5 px-5 py-4 font-semibold text-white">Activity history</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left">
+            <thead class="border-b border-white/5 text-xs uppercase tracking-wide text-slate-500">
+              <tr>
+                <th class="px-5 py-3 font-medium">Sport</th>
+                <th class="px-5 py-3 font-medium">When</th>
+                <th class="px-5 py-3 font-medium">Metric</th>
+                <th class="px-5 py-3 text-right font-medium">Points</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of d.history; track item.id) {
+                <tr class="border-b border-white/5 transition last:border-0 hover:bg-white/5">
+                  <td class="px-5 py-3.5">
+                    <span class="inline-flex items-center gap-2 font-medium text-white">
+                      {{ meta(item.sport).icon }} {{ meta(item.sport).label }}
+                    </span>
+                  </td>
+                  <td class="px-5 py-3.5 text-slate-400">{{ item.occurredAt | date: 'dd MMM yyyy, HH:mm' }}</td>
+                  <td class="px-5 py-3.5 text-slate-300">
+                    @if (item.distanceKm != null) { {{ item.distanceKm }} km }
+                    @else if (item.duration != null) { {{ item.duration }} <span class="text-slate-500">min:sec</span> }
+                    @else if (item.steps != null) { {{ item.steps | number }} steps }
+                  </td>
+                  <td class="px-5 py-3.5 text-right font-bold tabular-nums text-brand">{{ item.points | number }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+  }
+</section>

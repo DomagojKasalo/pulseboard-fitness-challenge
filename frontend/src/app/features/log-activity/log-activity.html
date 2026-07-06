@@ -1,0 +1,96 @@
+<section class="space-y-8">
+  <div>
+    <h1 class="text-3xl font-extrabold tracking-tight text-white">Log data</h1>
+    <p class="mt-1 text-slate-400">Register athletes and record their activities. Scoring is applied automatically.</p>
+  </div>
+
+  <div class="grid gap-6 lg:grid-cols-2">
+    <!-- Register -->
+    <form class="card space-y-4 p-6" (ngSubmit)="register()">
+      <h2 class="text-lg font-bold text-white">Register athlete</h2>
+
+      <div>
+        <label class="label" for="fn">First name</label>
+        <input id="fn" name="fn" class="input" [(ngModel)]="regFirst" required placeholder="Ana" />
+      </div>
+      <div>
+        <label class="label" for="ln">Last name</label>
+        <input id="ln" name="ln" class="input" [(ngModel)]="regLast" required placeholder="Kovac" />
+      </div>
+
+      @if (regMsg(); as m) {
+        <p class="text-sm" [class]="m.kind === 'ok' ? 'text-emerald-400' : 'text-rose-400'">{{ m.text }}</p>
+      }
+
+      <button type="submit" class="btn-primary w-full" [disabled]="regBusy() || !regFirst.trim() || !regLast.trim()">
+        {{ regBusy() ? 'Registering…' : 'Register' }}
+      </button>
+    </form>
+
+    <!-- Log activity -->
+    <form class="card space-y-4 p-6" (ngSubmit)="logActivity()">
+      <h2 class="text-lg font-bold text-white">Log activity</h2>
+
+      <div>
+        <label class="label" for="user">Athlete</label>
+        <select id="user" name="user" class="input" [(ngModel)]="actUser" required>
+          @for (u of users(); track u.id) {
+            <option [value]="u.id">{{ u.firstName }} {{ u.lastName }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="label" for="sport">Sport</label>
+          <select id="sport" name="sport" class="input" [(ngModel)]="actSport">
+            @for (s of sportOptions; track s.value) {
+              <option [value]="s.value">{{ s.label }}</option>
+            }
+          </select>
+        </div>
+        <div>
+          <label class="label" for="when">When</label>
+          <input id="when" name="when" type="datetime-local" class="input" [(ngModel)]="actDatetime" />
+        </div>
+      </div>
+
+      @if (metric === 'distance') {
+        <div>
+          <label class="label" for="distance">Distance (km)</label>
+          <input id="distance" name="distance" type="number" step="0.001" min="0" class="input"
+                 [(ngModel)]="distance" placeholder="5.5" />
+        </div>
+      } @else if (metric === 'duration') {
+        <div>
+          <label class="label" for="duration">Duration (minutes:seconds)</label>
+          <input id="duration" name="duration" class="input" [(ngModel)]="duration" placeholder="42:30" />
+        </div>
+      } @else {
+        <div>
+          <label class="label" for="steps">Steps</label>
+          <input id="steps" name="steps" type="number" min="0" class="input" [(ngModel)]="steps" placeholder="8000" />
+        </div>
+      }
+
+      @if (actMsg(); as m) {
+        <p class="text-sm font-medium" [class]="m.kind === 'ok' ? 'text-emerald-400' : 'text-rose-400'">{{ m.text }}</p>
+      }
+      @if (actErrors().length) {
+        <ul class="space-y-1 rounded-lg border border-rose-500/20 bg-rose-500/5 p-3 text-sm text-rose-300">
+          @for (e of actErrors(); track e) {
+            <li>· {{ e }}</li>
+          }
+        </ul>
+      }
+
+      <button type="submit" class="btn-primary w-full" [disabled]="actBusy() || !actUser">
+        {{ actBusy() ? 'Saving…' : 'Log activity' }}
+      </button>
+    </form>
+  </div>
+
+  <p class="text-center text-sm text-slate-500">
+    Done? Check the <a routerLink="/leaderboard" class="text-brand underline">leaderboard</a>.
+  </p>
+</section>

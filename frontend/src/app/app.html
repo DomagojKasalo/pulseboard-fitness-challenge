@@ -1,22 +1,24 @@
 <div class="min-h-screen">
   <header class="sticky top-0 z-30 border-b border-white/5 bg-surface-950/80 backdrop-blur-lg">
-    <nav class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3.5">
-      <a routerLink="/leaderboard" class="flex items-center gap-2.5">
-        <span class="grid h-9 w-9 place-items-center rounded-xl bg-brand text-lg text-surface-950 shadow-glow">⚡</span>
+    <nav class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-2 gap-y-2 px-3 py-3.5 sm:px-4">
+      <a routerLink="/leaderboard" class="flex items-center gap-2 sm:gap-2.5">
+        <span class="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-brand text-lg text-surface-950 shadow-glow">⚡</span>
         <span class="text-lg font-extrabold tracking-tight text-white">Pulse<span class="text-brand">Board</span></span>
       </a>
 
-      <div class="flex items-center gap-1">
+      <div class="flex items-center gap-0.5 sm:gap-1">
         <a routerLink="/leaderboard" routerLinkActive="!text-brand !bg-white/5"
-           class="rounded-lg px-3 py-2 text-sm font-medium text-slate-400 transition hover:text-white">
+           class="rounded-lg px-2 py-2 text-sm font-medium text-slate-400 transition hover:text-white sm:px-3">
           Leaderboard
         </a>
         <a routerLink="/dashboard" routerLinkActive="!text-brand !bg-white/5"
-           class="rounded-lg px-3 py-2 text-sm font-medium text-slate-400 transition hover:text-white">
+           class="rounded-lg px-2 py-2 text-sm font-medium text-slate-400 transition hover:text-white sm:px-3">
           Dashboard
         </a>
-        <a routerLink="/log" class="btn-primary ml-2 !px-3.5 !py-2 text-sm">
-          <span class="text-base leading-none">＋</span> Log activity
+        <a routerLink="/log" class="btn-primary ml-1 !px-3 !py-2 text-sm sm:ml-2">
+          <span class="text-base leading-none">＋</span>
+          <span class="hidden sm:inline">Log activity</span>
+          <span class="sm:hidden">Log</span>
         </a>
       </div>
     </nav>

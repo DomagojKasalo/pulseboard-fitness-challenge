@@ -53,7 +53,8 @@
     <!-- Ranks 4+ -->
     @if (rest().length) {
       <div class="card overflow-hidden">
-        <table class="w-full text-left">
+        <div class="overflow-x-auto">
+        <table class="w-full min-w-[28rem] text-left">
           <thead class="border-b border-white/5 text-xs uppercase tracking-wide text-slate-500">
             <tr>
               <th class="px-5 py-3 font-medium">Rank</th>
@@ -85,6 +86,7 @@
             }
           </tbody>
         </table>
+        </div>
       </div>
     }
   }

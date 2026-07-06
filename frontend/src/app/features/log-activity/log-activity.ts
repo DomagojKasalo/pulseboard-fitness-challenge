@@ -51,6 +51,21 @@ export class LogActivityComponent {
     return SPORT_OPTIONS.find((s) => s.value === this.actSport)?.metric ?? 'distance';
   }
 
+  get metricValid(): boolean {
+    if (this.metric === 'distance') return this.distance != null && this.distance > 0;
+    if (this.metric === 'duration') return this.durationValid();
+    return this.steps != null && this.steps > 0;
+  }
+
+  get canSubmit(): boolean {
+    return !this.actBusy() && !!this.actUser && !!this.actDatetime && this.metricValid;
+  }
+
+  private durationValid(): boolean {
+    const match = /^(\d+):([0-5]\d)$/.exec(this.duration.trim());
+    return match != null && Number(match[1]) * 60 + Number(match[2]) > 0;
+  }
+
   register(): void {
     this.regMsg.set(null);
     this.regBusy.set(true);

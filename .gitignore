@@ -1,0 +1,28 @@
+# .NET
+[Bb]in/
+[Oo]bj/
+*.user
+*.suo
+
+# SQLite (regenerated + seeded on startup)
+*.db
+*.db-shm
+*.db-wal
+
+# Node / Angular
+node_modules/
+dist/
+.angular/
+
+# IDE / OS
+.vs/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Local tooling / assignment source (not part of the deliverable)
+.claude/
+*.pdf

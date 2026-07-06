@@ -115,6 +115,57 @@ public class ApiIntegrationTests : IClassFixture<ApiFactory>
     }
 
     [Fact]
+    public async Task Ingest_FutureDatetime_Returns400()
+    {
+        var userId = await RegisterAsync("Future", "Logger");
+
+        var response = await _client.PostAsJsonAsync("/api/activities", new
+        {
+            userId = userId.ToString(),
+            datetime = "2099-01-01T00:00:00Z",
+            sport = "running",
+            distance = 5m,
+        });
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Theory]
+    [InlineData(-5)]
+    [InlineData(0)]
+    public async Task Ingest_NonPositiveDistance_Returns400(double distance)
+    {
+        var userId = await RegisterAsync($"Dist{distance}", "Athlete");
+
+        var response = await _client.PostAsJsonAsync("/api/activities", new
+        {
+            userId = userId.ToString(),
+            datetime = "2026-06-30T10:30:00Z",
+            sport = "running",
+            distance,
+        });
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Ingest_RunningWithExtraSteps_Returns400()
+    {
+        var userId = await RegisterAsync("Extra", "Field");
+
+        var response = await _client.PostAsJsonAsync("/api/activities", new
+        {
+            userId = userId.ToString(),
+            datetime = "2026-06-30T10:30:00Z",
+            sport = "running",
+            distance = 5m,
+            steps = 100,
+        });
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
     public async Task Leaderboard_ReflectsIngestedPoints()
     {
         var userId = await RegisterAsync("Leader", "Board");

@@ -6,17 +6,30 @@ namespace FitnessChallenge.Api.Application.Validation;
 
 public sealed class IngestActivityRequestValidator : AbstractValidator<IngestActivityRequest>
 {
-    public IngestActivityRequestValidator()
+    private readonly TimeProvider _clock;
+
+    public IngestActivityRequestValidator(TimeProvider clock)
     {
+        _clock = clock;
+
         RuleFor(x => x.UserId)
             .NotEmpty().WithMessage("userId is required.")
             .Must(id => Guid.TryParse(id, out _)).WithMessage("userId must be a valid identifier.");
 
         RuleFor(x => x.Datetime)
             .NotEmpty().WithMessage("datetime is required.")
-            .Must(dt => IsoDateTime.TryParse(dt, out _)).WithMessage("datetime must be a valid ISO 8601 timestamp.");
+            .Must(dt => IsoDateTime.TryParse(dt, out _)).WithMessage("datetime must be a valid ISO 8601 timestamp.")
+            .Must(NotInFuture).WithMessage("datetime cannot be in the future.");
 
         RuleFor(x => x).Custom(ValidateSportAndMetric);
+    }
+
+    private bool NotInFuture(string? datetime)
+    {
+        if (!IsoDateTime.TryParse(datetime, out var utc))
+            return true; // format error is reported by the previous rule
+
+        return utc <= _clock.GetUtcNow().UtcDateTime.AddMinutes(5); // small tolerance for clock skew
     }
 
     private static void ValidateSportAndMetric(IngestActivityRequest req, ValidationContext<IngestActivityRequest> ctx)

@@ -113,8 +113,12 @@ export class LogActivityComponent {
       },
       error: (err: HttpErrorResponse) => {
         this.actBusy.set(false);
-        this.actMsg.set({ kind: 'err', text: 'Could not log this activity.' });
-        this.actErrors.set(this.allErrors(err));
+        const errors = this.allErrors(err);
+        if (errors.length) {
+          this.actErrors.set(errors);
+        } else {
+          this.actMsg.set({ kind: 'err', text: 'Could not log this activity.' });
+        }
       },
     });
   }

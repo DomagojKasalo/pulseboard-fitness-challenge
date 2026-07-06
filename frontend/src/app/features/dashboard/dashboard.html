@@ -8,8 +8,8 @@
     @if (users().length) {
       <div>
         <label class="label" for="athlete">Athlete</label>
-        <select id="athlete" class="input min-w-[16rem]" [value]="userId() ?? ''"
-                (change)="onUserChange($any($event.target).value)">
+        <select id="athlete" name="athlete" class="input min-w-[16rem]"
+                [ngModel]="userId()" (ngModelChange)="onUserChange($event)">
           @for (u of users(); track u.id) {
             <option [value]="u.id">{{ u.firstName }} {{ u.lastName }}</option>
           }

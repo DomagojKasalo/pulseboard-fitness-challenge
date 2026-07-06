@@ -1,5 +1,6 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { Component, computed, effect, inject, input, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import {
   ApexAxisChartSeries,
@@ -47,7 +48,7 @@ interface DonutChart {
 
 @Component({
   selector: 'app-dashboard',
-  imports: [RouterLink, NgApexchartsModule, DecimalPipe, DatePipe],
+  imports: [RouterLink, NgApexchartsModule, DecimalPipe, DatePipe, FormsModule],
   templateUrl: './dashboard.html',
 })
 export class DashboardComponent {
